@@ -6,4 +6,7 @@ def home(request):
 
 
 def contacts(request):
+    if request.POST:
+        contact = request.POST
+        print(contact)
     return render(request, 'contacts.html')
