@@ -10,6 +10,7 @@ packages = [{include = "dz_19"}]
 python = "^3.12"
 django = "^5.1"
 black = "^24.8.0"
+ipython = "^8.26.0"
 
 
 [build-system]
