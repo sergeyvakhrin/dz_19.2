@@ -1,6 +1,5 @@
 from django.db import models
 
-
 NULLABLE = {"null": True, "blank": True}
 
 
@@ -55,6 +54,8 @@ class Product(models.Model):
     created_up = models.DateTimeField(
         verbose_name="Дата изменения", help_text="Введите дату изменения"
     )
+    manufactured_at = models.DateTimeField(verbose_name="Дата производства продукта",
+                                           help_text="Введите дату производства продукта", **NULLABLE)
 
     def __str__(self):
         return f"{self.product_name}: {self.price}"
@@ -63,10 +64,6 @@ class Product(models.Model):
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
         ordering = ("product_name",)
-
-
-
-
 
 # class Student(models.Model):
 #     first_name = models.CharField(max_length=100, verbose_name='имя')
