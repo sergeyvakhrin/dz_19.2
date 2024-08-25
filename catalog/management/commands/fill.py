@@ -8,19 +8,17 @@ from catalog.models import Product, Category
 
 class Command(BaseCommand):
 
-    def handle(self, *args, **options):
-
-        Product.objects.all().delete()
-        Category.objects.all().delete()
-
+    def load_data(self) -> list[dict]:
+        """ Метод для загрузки данных из json """
         ROOT_PATH = Path(__file__).parent.parent.parent.parent
         DATA_PATH = ROOT_PATH.joinpath('catalog.json')
         with open(DATA_PATH, 'rt', encoding="UTF-8") as file:
             catalog = json.load(file)
+        return catalog
 
+    def get_category(self, catalog) -> list:
+        """ Метод для получения списка экземпляров Класса Category для заполнения базы данных """
         category_for_create = []
-        product_for_create = []
-
         for category in catalog:
             data = category['fields']
             if category['model'] == 'catalog.category':
@@ -29,8 +27,11 @@ class Command(BaseCommand):
                     category_description=data.get('category_description', None),
                     pk=category['pk']
                 ))
-        Category.objects.bulk_create(category_for_create)
+        return category_for_create
 
+    def get_product(self, catalog) -> list:
+        """ Метод для получения списка экземпляров Класса Product для заполнения базы данных """
+        product_for_create = []
         for product in catalog:
             data = product['fields']
             if product['model'] == 'catalog.product':
@@ -45,6 +46,24 @@ class Command(BaseCommand):
                     created_at=data['created_at'],
                     created_up=data['created_up'],
                 ))
+        return product_for_create
+
+    def handle(self, *args, **options) -> None:
+        """ Метод автоматически срабатывает при обращении к коменде fill """
+
+        print("Загрузка данных")
+        catalog = self.load_data()
+
+        print("Очистка Базы данных")
+        Product.objects.all().delete()
+        Category.objects.all().delete()
+
+        print("Создание Категорий")
+        category_for_create = self.get_category(catalog)
+        Category.objects.bulk_create(category_for_create)
+
+        print("Создание Продуктов")
+        product_for_create = self.get_product(catalog)
         Product.objects.bulk_create(product_for_create)
 
 
