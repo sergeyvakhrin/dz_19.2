@@ -1,9 +1,11 @@
 from django.shortcuts import render
 
-from catalog.models import Contact
+from catalog.models import Contact, Product
 
 
 def home(request):
+    product = Product.objects.all()
+    print(product)
     return render(request, 'home.html')
 
 
