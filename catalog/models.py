@@ -4,6 +4,7 @@ NULLABLE = {"null": True, "blank": True}
 
 
 class Category(models.Model):
+    """ Класс для модели Категория """
     category_name = models.CharField(
         max_length=100, verbose_name="Категория", help_text="Введите название категории"
     )
@@ -14,6 +15,7 @@ class Category(models.Model):
     )
 
     def __str__(self):
+        """ Строковое представление данных """
         return f"{self.category_name}"
 
     class Meta:
@@ -23,6 +25,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    """ Класс для модели Продукт """
     product_name = models.CharField(
         max_length=100,
         verbose_name="Наименование",
@@ -49,13 +52,14 @@ class Product(models.Model):
     )
     price = models.IntegerField(verbose_name="Цена", help_text="Введите цену")
     created_at = models.DateTimeField(
-        verbose_name="Дата создания", help_text="Введите дату создания", **NULLABLE
+        verbose_name="Дата создания", help_text="Введите дату создания", auto_now_add=True
     )
-    created_up = models.DateTimeField(
-        verbose_name="Дата изменения", help_text="Введите дату изменения"
+    updated_at = models.DateTimeField(
+        verbose_name="Дата изменения", help_text="Введите дату изменения", auto_now=True
     )
 
     def __str__(self):
+        """ Строковое представление данных """
         return f"{self.product_name}"
 
     class Meta:
@@ -65,6 +69,7 @@ class Product(models.Model):
 
 
 class Contact(models.Model):
+    """ Класс для модели Контакты """
     name = models.CharField(
         max_length=100, verbose_name="Имя", help_text="Введите имя"
     )
@@ -79,6 +84,7 @@ class Contact(models.Model):
     )
 
     def __str__(self):
+        """ Строковое представление данных """
         return f'{self.name}'
 
     class Meta:
