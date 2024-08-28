@@ -1,9 +1,10 @@
 import json
+from datetime import datetime
 from pathlib import Path
 
 from django.core.management import BaseCommand
 
-from catalog.models import Product, Category
+from catalog.models import Product, Category, Contact
 
 
 class Command(BaseCommand):
@@ -43,10 +44,24 @@ class Command(BaseCommand):
                     product_image=data['product_image'],
                     category=valid_cat,
                     price=data['price'],
-                    created_at=data['created_at'],
-                    created_up=data['created_up'],
+                    created_at=data.get('created_at', datetime.now()),
+                    updated_at=data.get('created_up',datetime.now()),
                 ))
         return product_for_create
+
+    def get_contact(self, catalog):
+        """ Метод для получения списка экземпляров Класса Catalog для заполнения базы данных """
+        catalog_for_create = []
+        for category in catalog:
+            data = category['fields']
+            if category['model'] == 'catalog.contact':
+                catalog_for_create.append(Contact(
+                    name=data['name'],
+                    phone=data.get('phone', None),
+                    message=data.get('message', None),
+                    pk=category['pk']
+                ))
+        return catalog_for_create
 
     def handle(self, *args, **options) -> None:
         """ Метод автоматически срабатывает при обращении к коменде fill """
@@ -57,6 +72,7 @@ class Command(BaseCommand):
         print("Очистка Базы данных")
         Product.objects.all().delete()
         Category.objects.all().delete()
+        Contact.objects.all().delete()
 
         print("Создание Категорий")
         category_for_create = self.get_category(catalog)
@@ -65,5 +81,9 @@ class Command(BaseCommand):
         print("Создание Продуктов")
         product_for_create = self.get_product(catalog)
         Product.objects.bulk_create(product_for_create)
+
+        print("Создание Контактов")
+        catalog_for_create = self.get_contact(catalog)
+        Contact.objects.bulk_create(catalog_for_create)
 
 
