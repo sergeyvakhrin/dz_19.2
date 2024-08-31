@@ -3,17 +3,19 @@ from django.shortcuts import render
 from catalog.models import Contact, Product
 
 
-def home(request):
+def product_list(request):
     product = Product.objects.all()
-    print(product)
-    return render(request, 'home.html')
+    context = {'products': product}
+    return render(request, 'product_list.html', context)
 
 
-def contacts(request):
+def contact_list(request):
     if request.method == "POST":
         name = request.POST.get('name')
         contact = request.POST.get('phone')
         message = request.POST.get('message')
         print(f'Имя: {name}\nТелефон: {contact}\nСообщение: {message}\n')
         Contact.objects.create(name=name, phone=contact, message=message)
-    return render(request, 'contacts.html')
+    return render(request, 'contact_list.html')
+
+
